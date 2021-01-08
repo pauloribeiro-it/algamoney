@@ -1,11 +1,15 @@
 package com.algamoney.api.resource;
 
+import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.algamoney.api.dto.LancamentoEstatisticaCategoria;
+import com.algamoney.api.dto.LancamentoEstatisticaDia;
 import com.algamoney.api.repository.projection.ResumoLancamento;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -85,6 +89,18 @@ public class LancamentoResource {
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.notFound().build();
 		}
+	}
+
+	@GetMapping("/estatistica/por-categoria")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
+	public List<LancamentoEstatisticaCategoria> porCategoria(){
+		return this.repository.porCategoria(LocalDate.now());
+	}
+
+	@GetMapping("/estatistica/por-dia")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
+	public List<LancamentoEstatisticaDia> porDia(){
+		return this.repository.porDia(LocalDate.now());
 	}
 
 	@ExceptionHandler({PessoaInexistenteOuInativaException.class})
