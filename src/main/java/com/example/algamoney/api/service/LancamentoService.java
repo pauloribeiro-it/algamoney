@@ -12,6 +12,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -27,7 +28,12 @@ public class LancamentoService {
 	
 	@Autowired
 	private PessoaRepository pessoaRepository;
-	
+
+	@Scheduled(cron = "0 0 6 * * *")
+	public void avisarSobreLancamentosVencidos(){
+
+	}
+
 	public Lancamento salvar(Lancamento lancamento) {
 		Pessoa pessoa = pessoaRepository.findOne(lancamento.getPessoa().getCodigo());
 		if(Objects.isNull(pessoa) || pessoa.isInativo()) {
