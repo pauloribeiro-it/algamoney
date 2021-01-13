@@ -1,15 +1,13 @@
 package com.example.algamoney.api.model;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Cascade;
+
+import java.util.List;
 
 @Entity
 @Table(name="pessoa")
@@ -27,6 +25,10 @@ public class Pessoa {
 	
 	@NotNull
 	private Boolean ativo;
+
+	@Valid
+	@OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL)
+	private List<Contato> contatos;
 
 	public Long getCodigo() {
 		return codigo;
@@ -65,6 +67,12 @@ public class Pessoa {
 	public boolean isInativo() {
 		return !ativo;
 	}
-	
-	
+
+	public List<Contato> getContatos() {
+		return contatos;
+	}
+
+	public void setContatos(List<Contato> contatos) {
+		this.contatos = contatos;
+	}
 }
