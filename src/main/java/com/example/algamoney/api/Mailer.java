@@ -1,5 +1,7 @@
 package com.example.algamoney.api;
 
+import com.example.algamoney.api.model.Lancamento;
+import com.example.algamoney.api.model.Usuario;
 import com.example.algamoney.api.repository.LancamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,9 +12,11 @@ import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class Mailer {
@@ -38,6 +42,17 @@ public class Mailer {
 //				"Testando", template, variaveis);
 //		System.out.println("Terminado o envio de e-mail...");
 //	}
+
+    public void avisarSobreLancamentosVencidos(List<Lancamento> vencidos, List<Usuario> destinarios){
+        Map<String, Object> variaveis = new HashMap<>();
+        variaveis.put("lancamentos",vencidos);
+
+        List<String> emails = destinarios.stream().map(Usuario::getEmail).collect(Collectors.toList());
+
+        this.enviarEmail("ribeiropaulodev@gmail.com", emails,
+                            "Lançamentos vencidos",
+                          "mail/aviso-lancamentos-vencidos", variaveis);
+    }
 
     public void enviarEmail(String remetente, List<String> destinatarios,
                             String assunto, String template, Map<String, Object> variaveis){

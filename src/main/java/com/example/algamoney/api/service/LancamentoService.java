@@ -1,10 +1,13 @@
 package com.example.algamoney.api.service;
 
+import com.example.algamoney.api.Mailer;
 import com.example.algamoney.api.dto.LancamentoEstatisticaPessoa;
 import com.example.algamoney.api.model.Lancamento;
 import com.example.algamoney.api.model.Pessoa;
+import com.example.algamoney.api.model.Usuario;
 import com.example.algamoney.api.repository.LancamentoRepository;
 import com.example.algamoney.api.repository.PessoaRepository;
+import com.example.algamoney.api.repository.UsuarioRepository;
 import com.example.algamoney.api.service.exception.PessoaInexistenteOuInativaException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -29,9 +32,19 @@ public class LancamentoService {
 	@Autowired
 	private PessoaRepository pessoaRepository;
 
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+
+	@Autowired
+	private Mailer mailer;
+
+	private static final String DESTINATARIOS = "ROLE_PESQUISAR_LANCAMENTO";
+
 	@Scheduled(cron = "0 0 6 * * *")
 	public void avisarSobreLancamentosVencidos(){
-
+		List<Lancamento> vencidos = repository.findByDataVencimentoLessThanEqualAndDataPagamentoIsNull(LocalDate.of(2021, 5, 1));
+		List<Usuario> usuarios = usuarioRepository.findByPermissoesDescricao(DESTINATARIOS);
+		mailer.avisarSobreLancamentosVencidos(vencidos, usuarios);
 	}
 
 	public Lancamento salvar(Lancamento lancamento) {
