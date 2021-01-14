@@ -14,10 +14,20 @@ import com.example.algamoney.api.model.Pessoa;
 public class PessoaService {
 	@Autowired
 	private PessoaRepository repository;
-	
+
+	public Pessoa salvar(Pessoa pessoa){
+		pessoa.getContatos().forEach(c -> c.setPessoa(pessoa));
+		return repository.save(pessoa);
+	}
+
 	public Pessoa atualizar(Long codigo, Pessoa pessoa ) {
 		Pessoa pessoaBanco = buscaPessoaPeloCodigo(codigo);
-		BeanUtils.copyProperties(pessoa, pessoaBanco, "codigo");
+
+		pessoaBanco.getContatos().clear();
+		pessoaBanco.getContatos().addAll(pessoa.getContatos());
+		pessoaBanco.getContatos().forEach(c -> c.setPessoa(pessoaBanco));
+
+		BeanUtils.copyProperties(pessoa, pessoaBanco, "codigo","contatos");
 		return repository.save(pessoaBanco);
 	}
 
@@ -34,4 +44,5 @@ public class PessoaService {
 		}
 		return pessoaBanco;
 	}
+
 }
