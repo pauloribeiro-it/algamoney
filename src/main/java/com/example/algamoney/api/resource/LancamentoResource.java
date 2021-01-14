@@ -1,5 +1,8 @@
 package com.example.algamoney.api.resource;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +35,7 @@ import com.example.algamoney.api.event.RecursoCriadoEvent;
 import com.example.algamoney.api.model.Lancamento;
 import com.example.algamoney.api.service.LancamentoService;
 import com.example.algamoney.api.service.exception.PessoaInexistenteOuInativaException;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/lancamentos")
@@ -113,6 +117,15 @@ public class LancamentoResource {
 		byte[] relatorio = service.relatorioPorPessoa(inicio, fim);
 		return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
 				.body(relatorio);
+	}
+
+	@PostMapping("/anexo")
+	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO') and #oauth2.hasScope('write')")
+	public String uploadAnexo(@RequestParam MultipartFile anexo) throws IOException {
+		OutputStream out = new FileOutputStream("D://anexo--"+anexo.getOriginalFilename());
+		out.write(anexo.getBytes());
+		out.close();
+		return "ok";
 	}
 
 	@ExceptionHandler({PessoaInexistenteOuInativaException.class})

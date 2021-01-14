@@ -1,6 +1,7 @@
 package com.example.algamoney.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -47,7 +48,8 @@ public class Lancamento {
 	@ManyToOne
 	@JoinColumn(name="codigo_categoria")
 	private Categoria categoria;
-	
+
+	@JsonIgnoreProperties("contatos")
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name="codigo_pessoa")
