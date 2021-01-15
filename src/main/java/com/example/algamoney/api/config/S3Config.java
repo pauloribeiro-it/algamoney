@@ -3,13 +3,13 @@ package com.example.algamoney.api.config;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.BucketLifecycleConfiguration;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.Tag;
 import com.amazonaws.services.s3.model.lifecycle.LifecycleFilter;
-import com.amazonaws.services.s3.model.lifecycle.LifecycleFilterPredicate;
 import com.amazonaws.services.s3.model.lifecycle.LifecycleTagPredicate;
 import com.example.algamoney.api.config.property.AlgamoneyApiProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class S3Config {
         AWSCredentials credentials = new BasicAWSCredentials(property.getS3().getAccessKeyId(), property.getS3().getSecretAccessKeyId());
         AmazonS3 amazonS3 = AmazonS3ClientBuilder.standard()
                                     .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                                    .withRegion("sa-east-1")//América do Sul - São Paulo
+                                    .withRegion(Regions.SA_EAST_1)//América do Sul - São Paulo
                                     .build();
 
         if(!amazonS3.doesBucketExistV2(property.getS3().getBucket())){
