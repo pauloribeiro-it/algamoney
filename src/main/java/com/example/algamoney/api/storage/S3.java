@@ -8,10 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -22,7 +22,7 @@ public class S3 {
     private AmazonS3 amazonS3;
 
     @Autowired
-    private AlgamoneyApiProperty algamoneyApiProperty;
+    private AlgamoneyApiProperty property;
 
     private static final Logger logger = LoggerFactory.getLogger(S3.class);
 
@@ -36,7 +36,7 @@ public class S3 {
 
         try {
             String nomeUnico = gerarNomeUnico(arquivo.getOriginalFilename());
-            PutObjectRequest putObjectRequest = new PutObjectRequest(algamoneyApiProperty.getS3().getBucket(),
+            PutObjectRequest putObjectRequest = new PutObjectRequest(property.getS3().getBucket(),
                                                                      nomeUnico, arquivo.getInputStream(),
                                                                      objectMetadata)
                                                 .withAccessControlList(acl);
@@ -57,16 +57,28 @@ public class S3 {
     }
 
     public String configurarUrl(String objeto){
-        return "https://" + algamoneyApiProperty.getS3().getBucket() + ".s3-"+ Regions.SA_EAST_1.getName() +".amazonaws.com/"+objeto;
+        return "https://" + property.getS3().getBucket() + ".s3-"+ Regions.SA_EAST_1.getName() +".amazonaws.com/"+objeto;
+    }
+
+    public void salvar(String object) {
+        SetObjectTaggingRequest setObjectTaggingRequest = new SetObjectTaggingRequest(property.getS3().getBucket(),
+                                                                                      object,new ObjectTagging(Collections.emptyList()));
+        amazonS3.setObjectTagging(setObjectTaggingRequest);
+    }
+
+    public void remover(String objeto) {
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(property.getS3().getBucket(), objeto);
+        amazonS3.deleteObject(deleteObjectRequest);
     }
 
     private String gerarNomeUnico(String originalFilename) {
         return UUID.randomUUID().toString() +"_"+ originalFilename;
     }
 
-    public void salvar(String object) {
-        SetObjectTaggingRequest setObjectTaggingRequest = new SetObjectTaggingRequest(algamoneyApiProperty.getS3().getBucket(),
-                                                                                      object,new ObjectTagging(Collections.emptyList()));
-        amazonS3.setObjectTagging(setObjectTaggingRequest);
+    public void substituir(String objetoAntigo, String objetoNovo) {
+        if(StringUtils.hasText(objetoAntigo)){
+            this.remover(objetoAntigo);
+        }
+        salvar(objetoNovo);
     }
 }
