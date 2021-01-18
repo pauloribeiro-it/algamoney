@@ -103,7 +103,7 @@ public class LancamentoResource {
 	@GetMapping("/estatistica/por-categoria")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
 	public List<LancamentoEstatisticaCategoria> porCategoria(){
-		return this.repository.porCategoria(LocalDate.now());
+		return this.repository.porCategoria(LocalDate.of(2021, 3, 1));
 	}
 
 	@GetMapping("/estatistica/por-dia")
