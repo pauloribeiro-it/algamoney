@@ -1,5 +1,6 @@
 package com.example.algamoney.api.model;
 
+import com.example.algamoney.api.repository.listener.LancamentoAnexoListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+@EntityListeners(LancamentoAnexoListener.class)
 @Entity
 @Table(name="lancamento")
 public class Lancamento {

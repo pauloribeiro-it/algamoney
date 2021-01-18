@@ -87,7 +87,7 @@ public class LancamentoService {
 		}
 		if(StringUtils.isEmpty(lancamento.getAnexo()) && StringUtils.hasText(lancamentoSalvo.getAnexo())){
 			s3.remover(lancamentoSalvo.getAnexo());
-		}else if(StringUtils.hasLength(lancamento.getAnexo()) && !lancamento.getAnexo().equals(lancamentoSalvo.getAnexo())){
+		}else if(StringUtils.hasText(lancamento.getAnexo()) && !lancamento.getAnexo().equals(lancamentoSalvo.getAnexo())){
 			s3.substituir(lancamentoSalvo.getAnexo(), lancamento.getAnexo());
 		}
 
