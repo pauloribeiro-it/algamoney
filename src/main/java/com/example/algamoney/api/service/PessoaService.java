@@ -1,6 +1,7 @@
 package com.example.algamoney.api.service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import com.example.algamoney.api.repository.PessoaRepository;
 import org.springframework.beans.BeanUtils;
@@ -38,11 +39,7 @@ public class PessoaService {
 	}
 	
 	public Pessoa buscaPessoaPeloCodigo(Long codigo) {
-		Pessoa pessoaBanco = repository.findOne(codigo);
-		if(Objects.isNull(pessoaBanco)) {
-			throw new EmptyResultDataAccessException(1);
-		}
-		return pessoaBanco;
+		return repository.findById(codigo).orElseThrow(() -> new EmptyResultDataAccessException(1));
 	}
 
 }
